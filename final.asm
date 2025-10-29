@@ -1,5 +1,5 @@
+TITLE BAI KIEM TRA - TRAN QUANG HUY - MASV: 242630944 - LOP: CNTTVA1
 
-TITLE BAI KIEM TRA – TRAN QUANG HUY MASV: 242630944 LOp CNTTVA1
 
 .model small
 .stack 100h
@@ -10,7 +10,8 @@ TITLE BAI KIEM TRA – TRAN QUANG HUY MASV: 242630944 LOp CNTTVA1
                 db "1. Nhap va in loi chao", 13, 10
                 db "2. Tinh tong 2 so", 13, 10
                 db "0. Thoat chuong trinh", 13, 10
-                db "Chon chuc nang (0, 1, 2): $" 
+                db "Chon chuc nang (0, 1, 2): $"  
+    err_key  db 13,10,"Phim khong hop le! Hay nhan 0, 1 hoac 2.",13,10,'$'
                 
 
     ; --- Chuc nang 1 ---
@@ -44,27 +45,29 @@ TQHuy proc
 
 ; --- Vong lap Menu chinh ---
 menu_loop:
+    ; In menu
     lea dx, menu_str
     mov ah, 9
     int 21h
 
-    ; Doc lua chon (1 ky tu)
+    ; Doc dung 1 ky tu (co the la '0','1','2' hoac Enter=0Dh)
     mov ah, 1
-    int 21h
-    mov bl, al
+    int 21h         ; Doc ky tu lua chon vao AL
+    mov bl, al      ; Luu lua chon vao BL         
 
-    ; Doc ky tu tiep (thuong la Enter) de don buffer
-    mov ah, 1
-    int 21h
-
-    ; So sanh lua chon
+    ; So sanh 3 truong hop hop le
     cmp bl, '1'
-    je option_1
+    je  option_1
     cmp bl, '2'
-    je option_2
+    je  option_2
     cmp bl, '0'
-    je exit_prog
-    jmp menu_loop
+    je  exit_prog
+
+    ; Con lai (bao gom Enter=0Dh) -> thong bao sai
+    lea dx, err_key
+    mov ah, 9
+    int 21h
+    jmp menu_loop ; quay ve dau menu
 
 ; --- Chuc nang 1: Chao hoi ---
 option_1:
