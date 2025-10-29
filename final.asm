@@ -1,7 +1,5 @@
-; ================= EMU8086 / MASM =================
-; Menu: 1) Chao hoi  2) Tinh tong 2 so  0) Thoat
-; Nhap so dung int 21h/AH=0Ah (buffered), ho tro so am
-; In so 16-bit signed (co dau - neu am)
+
+TITLE BAI KIEM TRA – TRAN QUANG HUY MASV: 242630944 LOp CNTTVA1
 
 .model small
 .stack 100h
@@ -12,7 +10,8 @@
                 db "1. Nhap va in loi chao", 13, 10
                 db "2. Tinh tong 2 so", 13, 10
                 db "0. Thoat chuong trinh", 13, 10
-                db "Chon chuc nang (0, 1, 2): $"
+                db "Chon chuc nang (0, 1, 2): $" 
+                
 
     ; --- Chuc nang 1 ---
     prompt1     db 13, 10, "Ho ten cua ban la: $"
@@ -38,7 +37,7 @@
     newline     db 13, 10, '$'
 
 .code
-main proc
+TQHuy proc
     ; Khoi tao DS
     mov ax, @data
     mov ds, ax
@@ -157,7 +156,7 @@ option_2:
 exit_prog:
     mov ah, 4Ch
     int 21h
-endp tranquanghuy_qh120411 ;ket thuc chuong trinh
+TQHuy ENDP ;ket thuc chuong trinh
 
 ; ==============================================
 ; NHAP_SO: ASCII -> signed 16-bit (AX)
@@ -221,7 +220,7 @@ nhap_so endp
 ; In dau '-' neu am, va in '0' neu so = 0.
 ; ==============================================
 in_so proc
-    push ax
+    push ax                    ;luu cac thanh ghi dung tam
     push bx
     push cx
     push dx
@@ -232,15 +231,15 @@ in_so proc
     ; 0 ?
     cmp bx, 0
     jne is_not_zero
-    mov ah, 2
-    mov dl, '0'
+    mov ah, 2                  ; AH = 02h: in1 ky tu trong DL
+    mov dl, '0'                ; in '0' nei gia tri = 0
     int 21h
     jmp is_restore
 
 is_not_zero:
     ; Am ?
     cmp bx, 0
-    jge is_positive
+    jge is_positive     ;neu >=0 tjo np qua in dau '-'
     mov ah, 2
     mov dl, '-'
     int 21h
@@ -269,7 +268,7 @@ print_loop:
     loop print_loop     ;Lap lai CX lan
 
 is_restore:
-    pop di
+    pop di          ;khoi phuc thanh ghi
     pop dx
     pop cx
     pop bx
@@ -278,4 +277,4 @@ is_restore:
 in_so endp
                 
 ; Ket thuc chuong trinh
-endp tranquanghuy_qh120411
+END TQHuy
